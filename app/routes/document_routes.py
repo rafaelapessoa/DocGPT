@@ -4,6 +4,8 @@ from app.models.document import Document
 from app.models.chat_session import ChatSession
 from app.models.ai_processor import AIProcessor
 
+# RUTAS RESTFUL PARA LOS DOCUMENTOS Y CHAT.
+
 # Crear un Blueprint para las rutas de documentos
 document_routes = Blueprint('document_routes', __name__)
 
@@ -158,7 +160,7 @@ def start_chat_session():
 @document_routes.route('/chat/send', methods=['POST'])
 def send_message_to_chat():
     """
-    Envía un mensaje dentro de una sesión de chat.
+    Envía un mensaje dentro de una sesión de chat y obtiene una respuesta de Ollama.
     """
     data = request.get_json()
 
@@ -173,7 +175,19 @@ def send_message_to_chat():
     if not chat_session:
         return jsonify({"error": "Sesión de chat no encontrada."}), 404
 
-    # Enviar el mensaje y guardar en el historial
+    # Enviar el mensaje al historial
     chat_session.send_message(message)
 
-    return jsonify({"message": "Mensaje enviado con éxito.", "chat_history": chat_session.get_history()}), 200
+    # Llamar a Ollama para generar la respuesta
+    try:
+        ai_processor = AIProcessor()
+        response = ai_processor.modify_content(message, "Responde como un asistente de IA.")
+        chat_session.send_message(response)  # Agregar la respuesta al historial
+
+        return jsonify({
+            "message": "Mensaje enviado con éxito.",
+            "chat_history": chat_session.get_history()
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+

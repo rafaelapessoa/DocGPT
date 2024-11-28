@@ -1,3 +1,5 @@
+#CLASE PARA GESTIONAR DOCUMENTOS.
+
 class Document:
     """
     Representa un documento subido por el usuario.

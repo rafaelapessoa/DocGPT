@@ -5,6 +5,11 @@ from app.models.file_manager import FileManager
 from app.models.history_manager import HistoryManager
 from app import create_app
 
+#PUNTO DE ENTRADA PARA CORRER LA APP
+
+import os
+os.environ["PYTHONIOENCODING"] = "utf-8"
+
 app = create_app()
 
 if __name__ == "__main__":

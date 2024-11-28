@@ -1,5 +1,7 @@
 import os
 
+# GESTIÓN DE ARCHIVOS SUBIDOS.
+
 class FileManager:
     """
     Gestiona la carga, almacenamiento y eliminación de archivos.

@@ -1,3 +1,5 @@
+# MANEJO DE SESIONES DE CHAT
+
 class ChatSession:
     def __init__(self, session_id, user_id, document_id):
         self.session_id = session_id

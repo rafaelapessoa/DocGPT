@@ -1,22 +1,26 @@
 import subprocess
 import json
 
+# INTERFAZ PARA COMUNICARSE CON OLLAMA
+
 class AIProcessor:
     def __init__(self, model_name="llama3.2"):
         self.model_name = model_name
 
     def _call_ollama(self, prompt):
         """
-        Llama a Ollama con un prompt y devuelve la respuesta.
+        Llama a Ollama con un prompt y devuelve la respuesta formateada.
         """
         try:
             result = subprocess.run(
-                ["ollama", "run", self.model_name],
-                input=json.dumps({"prompt": prompt}),
-                text=True,
-                capture_output=True,
-                check=True
+             ["ollama", "run", self.model_name],
+             input=json.dumps({"prompt": prompt}),
+             text=True,
+             encoding="utf-8",  # Especificar UTF-8
+             capture_output=True,
+             check=True
             )
+            
             # Imprimir la salida para depuración
             print("Salida de Ollama (stdout):", result.stdout)
             print("Error de Ollama (stderr):", result.stderr)
@@ -24,13 +28,20 @@ class AIProcessor:
             # Intentar parsear la respuesta como JSON
             try:
                 response = json.loads(result.stdout)
-                return response.get("response", result.stdout.strip())
+                # Aplicar formato a la respuesta
+                return self.format_response(response.get("response", result.stdout.strip()))
             except json.JSONDecodeError:
-                # Si el JSON no es válido, devolvemos el texto crudo
+                # Si el JSON no es válido, devolvemos el texto crudo formateado
                 print("Respuesta en texto plano:", result.stdout.strip())
-                return result.stdout.strip()
+                return self.format_response(result.stdout.strip())
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Error llamando a Ollama: {e.stderr}")
+
+    def format_response(self, response):
+        """
+        Aplica formato a la respuesta para garantizar claridad.
+        """
+        return response.replace("\n", "\n\n").strip()
 
     def summarize(self, content):
         if not content:
