@@ -1,0 +1,3 @@
+Sobre esta base, introducimos un tipo de “Micro Corpus”, conocido como DocGPT, una herramienta diseñada para llevar capacidades de inteligencia artificial a documentos privados. La aplicación incluye una interfaz de chat, historial de documentos, carga de archivos y la posibilidad de mostrar imágenes opcionalmente. El backend puede utilizar frameworks como LangChain para conectarse con la IA y procesar entradas, o conectarse directamente con APIs específicas de IA.
+
+DocGPT actúa como un asistente de IA privado, permitiendo a los usuarios subir documentos y realizar tareas como traducciones, resúmenes y modificaciones. Garantiza privacidad y seguridad, lo que lo hace ideal para información sensible.
