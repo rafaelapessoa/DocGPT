@@ -129,65 +129,40 @@ def process_document():
 
 
 
-@document_routes.route('/chat/start', methods=['POST'])
-def start_chat_session():
-    """
-    Inicia una nueva sesión de chat vinculada a un documento.
-    """
-    data = request.get_json()
-
-    if not data or 'document_id' not in data:
-        return jsonify({"error": "Se requiere 'document_id' para iniciar una sesión de chat."}), 400
-
-    document_id = data['document_id']
-
-    # Verificar si el documento existe
-    document = documents_db.get(document_id)
-    if not document:
-        return jsonify({"error": "Documento no encontrado."}), 404
-
-    # Crear una nueva sesión de chat
-    session_id = len(chat_sessions_db) + 1
-    new_chat_session = ChatSession(session_id, 1, document_id)  # 1 es el user_id (simulado)
-    new_chat_session.start_session()
-
-    # Guardar la sesión en la base de datos simulada
-    chat_sessions_db[session_id] = new_chat_session
-
-    return jsonify({"message": "Sesión de chat iniciada con éxito.", "session_id": session_id}), 201
-
-
 @document_routes.route('/chat/send', methods=['POST'])
 def send_message_to_chat():
     """
-    Envía un mensaje dentro de una sesión de chat y obtiene una respuesta de Ollama.
+    Envía un mensaje al chat y obtiene una respuesta de Ollama.
+    El chat no requiere iniciar sesiones explícitas; simplemente responde al mensaje enviado.
     """
     data = request.get_json()
 
-    if not data or 'session_id' not in data or 'message' not in data:
-        return jsonify({"error": "Se requieren 'session_id' y 'message' para enviar un mensaje."}), 400
+    # Validar que se envíe un mensaje
+    if not data or 'message' not in data:
+        return jsonify({"error": "Se requiere 'message' para enviar un mensaje."}), 400
 
-    session_id = data['session_id']
     message = data['message']
 
-    # Verificar si la sesión existe
-    chat_session = chat_sessions_db.get(session_id)
-    if not chat_session:
-        return jsonify({"error": "Sesión de chat no encontrada."}), 404
-
-    # Enviar el mensaje al historial
-    chat_session.send_message(message)
+    # Crear un historial local temporal para mantener el contexto (si es necesario)
+    chat_history = [{"user": message}]
 
     # Llamar a Ollama para generar la respuesta
     try:
         ai_processor = AIProcessor()
         response = ai_processor.modify_content(message, "Responde como un asistente de IA.")
-        chat_session.send_message(response)  # Agregar la respuesta al historial
+
+        # Si la respuesta está vacía o no válida, manejarla
+        if not response.strip():
+            response = "Lo siento, no tengo una respuesta para eso."
+
+        # Agregar la respuesta al historial
+        chat_history.append({"bot": response})
 
         return jsonify({
             "message": "Mensaje enviado con éxito.",
-            "chat_history": chat_session.get_history()
+            "chat_history": chat_history  # Devolver el historial actualizado
         }), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Error al procesar el mensaje: {str(e)}"}), 500
+
 

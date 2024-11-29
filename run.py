@@ -4,14 +4,20 @@ from app.models.ai_processor import AIProcessor
 from app.models.file_manager import FileManager
 from app.models.history_manager import HistoryManager
 from app import create_app
-
-#PUNTO DE ENTRADA PARA CORRER LA APP
-
+from flask_cors import CORS
 import os
+
+# Configuración de encoding
 os.environ["PYTHONIOENCODING"] = "utf-8"
 
+# Crear la app de Flask
 app = create_app()
 
+# Habilitar CORS para toda la app y permitir solicitudes desde el frontend
+CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}})
+
+
+# Punto de entrada principal
 if __name__ == "__main__":
     app.run(debug=True)
 

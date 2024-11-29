@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocGPT</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>DocGPT - Interactúa con Documentos</h1>
+    </header>
+    <main>
+        <!-- Subir Archivos -->
+        <section id="upload-section">
+            <h2>Subir Documento</h2>
+            <form id="upload-form">
+                <input type="file" id="file-input" accept=".txt" required>
+                <button type="submit">Subir</button>
+            </form>
+            <div id="upload-result"></div>
+        </section>
+
+        <!-- Listar Documentos -->
+        <section id="list-section">
+            <h2>Documentos Disponibles</h2>
+            <button id="list-documents">Listar Documentos</button>
+            <ul id="documents-list"></ul>
+        </section>
+
+        <!-- Procesar Documento -->
+        <section id="process-section">
+            <h2>Procesar Documento</h2>
+            <form id="process-form">
+                <label for="document-id">ID del Documento:</label>
+                <input type="number" id="document-id" required>
+
+                <label for="action">Acción:</label>
+                <select id="action" required>
+                    <option value="summarize">Resumir</option>
+                    <option value="translate">Traducir</option>
+                    <option value="modify">Modificar</option>
+                </select>
+
+                <label for="extra-input">Parámetro Extra:</label>
+                <input type="text" id="extra-input" placeholder="Idioma o Instrucciones (opcional)">
+
+                <button type="submit">Procesar</button>
+            </form>
+            <div id="process-result"></div>
+        </section>
+
+        <!-- Manejar el chat -->
+        <section id="chat-section">
+            <h2>Chat con Ollama</h2>
+            <div id="chat-container" style="white-space: pre-line; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll;">
+                <ul id="chat-history" style="list-style: none; padding: 0; margin: 0;"></ul>
+            </div>
+            <form id="send-message-form" style="margin-top: 10px;">
+                <label for="message-input">Escribe un mensaje:</label>
+                <input type="text" id="message-input" placeholder="Escribe tu mensaje aquí..." required style="width: 80%; padding: 5px; margin-right: 5px;">
+                <button type="submit" style="padding: 5px;">Enviar</button>
+            </form>
+        </section>
+        
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
